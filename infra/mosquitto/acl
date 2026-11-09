@@ -1,0 +1,20 @@
+# Contrôle d'accès par topic.
+#   - le backend lit toutes les mesures/statuts et publie les commandes de relais ;
+#   - chaque capteur (nom d'utilisateur MQTT = device_id) ne peut publier QUE sur ses propres topics
+#     et ne lit que ses propres commandes : un capteur compromis n'affecte pas les autres.
+
+user samaconso-backend
+topic read  samaconso/+/mesures
+topic read  samaconso/+/status
+topic write samaconso/+/commande
+
+pattern write samaconso/%u/mesures
+pattern write samaconso/%u/status
+pattern read  samaconso/%u/commande
+
+# Autorisations du compte ESP32 SamaConso
+user esp32-awa
+topic write samaconso/esp32-awa-pzem/mesures
+topic write samaconso/esp32-awa-pzem/status
+topic write samaconso/esp32-awa-relais1/status
+topic read samaconso/esp32-awa-relais1/commande

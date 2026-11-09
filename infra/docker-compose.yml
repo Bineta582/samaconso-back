@@ -1,0 +1,26 @@
+# Services d'infrastructure de SamaConso (développement).
+# Laravel tourne en local (php artisan serve) et se connecte à ces conteneurs.
+#   docker compose up -d
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: sama_conso
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-passer}
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sama_conso1"]
+      interval: 10s
+      retries: 5
+
+  ml-service:
+    build: ../ml-service
+    environment:
+      ML_SERVICE_TOKEN: ${ML_SERVICE_TOKEN:-a737161bcc1199b49867051667b65a8995441ad24fbc24b1d24233ee10328ecb}
+    ports: ["8001:8001"]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
